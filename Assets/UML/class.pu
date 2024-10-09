@@ -1,0 +1,21 @@
+@startuml ecommerce_class_diagram
+left to right direction
+class UnitBase {
+  -int id
+  -float hp
+  -float attack
+  -float masicAttack
+  -float defense
+  -float speed
+  -Piece[] pieces 
+  +void Move()
+  +void Attack()
+  +void 
+}
+
+class PieceBase {
+  -int id
+}
+
+UnitBase <|-- Unit
+@enduml
