@@ -1,21 +1,45 @@
 @startuml ecommerce_class_diagram
 left to right direction
-class UnitBase {
-  -int id
-  -float hp
-  -float attack
-  -float masicAttack
-  -float defense
-  -float speed
-  -Piece[] pieces 
+abstract class UnitBase {
+  #int id
+  #float hp
+  #float attack
+  #float masicAttack
+  #float defense
+  #float speed
+  #Piece[] pieces 
   +void Move()
   +void Attack()
-  +void 
+  +void Damage()
 }
 
-class PieceBase {
-  -int id
+class Unit {
+}
+
+abstract class PieceBase {
+  #int id
+}
+
+class Piece {
+}
+
+class main {
+}
+
+class GameManager {
+}
+
+class BattleManager {
+}
+
+class TurnManager {
+}
+
+class Parameter {
 }
 
 UnitBase <|-- Unit
+PieceBase <|-- Piece
+
+main *-- Game
 @enduml
