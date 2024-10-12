@@ -1,0 +1,7 @@
+@startuml input
+User --> Input : 入力
+Input --> Key : 伝達
+Key --> Down : 通知
+Key --> Up : 通知
+
+@enduml

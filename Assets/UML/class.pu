@@ -38,8 +38,21 @@ class TurnManager {
 class Parameter {
 }
 
+class Input {
+}
+
 UnitBase <|-- Unit
 PieceBase <|-- Piece
 
-main *-- Game
+
+Unit "1"--"1.." Piece
+
+main *-- GameManager
+main *-- Input
+GameManager *-- BattleManager
+BattleManager *-- TurnManager
+
+BattleManager "1"--"1.." Unit
+TurnManager <... Unit
+
 @enduml
