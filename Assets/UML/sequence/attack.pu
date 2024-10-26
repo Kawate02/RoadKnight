@@ -1,0 +1,4 @@
+@startuml attack
+Input --> Turn : 入力
+
+@enduml

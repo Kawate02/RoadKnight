@@ -1,0 +1,8 @@
+@startuml all
+main --> Game : 生成
+loop
+Game --> Turn : 生成
+Turn --> Unit : 生成
+
+end
+@enduml
