@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class Obj : MonoBehaviour
 {
-    public int id;
+    int id;
 
     public void SetId(int id)
     {
