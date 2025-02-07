@@ -1,4 +1,4 @@
-public class Image : UI
+public class Image : UIBase
 {
     public virtual Image Init(string image, int sort, float x = 0, float y = 0, float width = 0, float height = 0)
     {    

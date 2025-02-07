@@ -4,10 +4,6 @@ using System.Threading.Tasks;
 using System.Diagnostics;
 using System.Threading;
 
-public interface IBeClickable
-{
-    int OnClick();
-}
 public enum ObjectType 
 { 
     Sprite, 
@@ -23,14 +19,47 @@ public class Vector3
         this.y = y;
         this.z = z;
     }
+    public Vector3(Vector3 v)
+    {
+        this.x = v.x;
+        this.y = v.y;
+        this.z = v.z;
+    }
     public float x;
     public float y;
     public float z;
 
-    new public string ToString()
+    public static Vector3 operator +(Vector3 a, Vector3 b) => new Vector3(a.x + b.x, a.y + b.y, a.z + b.z);
+    public static Vector3 operator -(Vector3 a, Vector3 b) => new Vector3(a.x - b.x, a.y - b.y, a.z - b.z);
+    public static Vector3 operator *(Vector3 a, float b) => new Vector3(a.x * b, a.y * b, a.z * b);
+    public static Vector3 operator /(Vector3 a, float b) => new Vector3(a.x / b, a.y / b, a.z / b);
+
+    public static bool operator ==(Vector3 a, Vector3 b)
     {
-        return "(" + x + ", " + y + ", " + z + ")";
+        if (a.x == b.x && a.y == b.y && a.z == b.z) return true;
+        else return false;
     }
+    public static bool operator !=(Vector3 a, Vector3 b)
+    {
+        if (a.x == b.x && a.y == b.y && a.z == b.z) return false;
+        else return true;
+    }
+    public override bool Equals(object obj)
+    {
+        if (obj == null || this.GetType() != obj.GetType())
+        {
+            return false;
+        }
+        Vector3 v = (Vector3)obj;
+        if (x == v.x && y == v.y && z == v.z) return true;
+        else return false;
+    }
+    public override int GetHashCode()
+    {
+        return this.x.GetHashCode() ^ this.y.GetHashCode() ^ this.z.GetHashCode();
+    }
+
+    new public string ToString() => "(" + x + ", " + y + ", " + z + ")";
 }
 public class Object
 {
@@ -97,6 +126,27 @@ public class Object
                 pos.x += x / offset;
                 pos.y += y / offset;
                 pos.z += z / offset;
+                timer -= 1;
+                await Task.Delay(1);
+            }
+        }
+    }
+    public async virtual void Move(Vector3 v, float offset = 0)
+    {
+        if (offset == 0)
+        {
+            pos.x += v.x;
+            pos.y += v.y;
+            pos.z += v.z;
+        }
+        else
+        {
+            float timer = offset;
+            while (timer > 0)
+            {
+                pos.x += v.x / offset;
+                pos.y += v.y / offset;
+                pos.z += v.z / offset;
                 timer -= 1;
                 await Task.Delay(1);
             }

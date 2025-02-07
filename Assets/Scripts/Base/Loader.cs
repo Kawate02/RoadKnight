@@ -4,15 +4,15 @@ using Unity.VisualScripting;
 using UnityEngine;
 public static class SpriteLoader
 {
-    static List<Sprite> list = new List<Sprite>();
+    static List<UnityEngine.Sprite> list = new List<UnityEngine.Sprite>();
     static Dictionary<string, int> pathList = new Dictionary<string, int>();
 
-    public static Sprite Load(string path)
+    public static UnityEngine.Sprite Load(string path)
     {
         if (path == null) return null;
         if (pathList.ContainsKey(path)) return list[pathList[path]];
         pathList.Add(path, list.Count);
-        list.Add(Resources.Load<Sprite>(path));
+        list.Add(Resources.Load<UnityEngine.Sprite>(path));
         return list[list.Count - 1];
     }
 }

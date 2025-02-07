@@ -4,11 +4,15 @@ public enum Trigger
     Move_Left,
     Move_Up,
     Move_Down,
+    Camera_Move_Right,
+    Camera_Move_Left,
     Mouse_Left,
     Mouse_Right,
     Rotate_X,
     Rotate_Y,
     Rotate_Z,
+    ViewMode,
+    Escape,
     Count
 }
 

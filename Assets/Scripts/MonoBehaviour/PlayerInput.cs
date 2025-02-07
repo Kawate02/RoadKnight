@@ -70,6 +70,7 @@ public class PlayerInput : MonoBehaviour
         }
         if (UInput.GetKeyDown(KeyCode.A))
         {
+            Input.Set(Trigger.Camera_Move_Left, true);
             Input.Set(Trigger.Rotate_X, true);
         }
         if (UInput.GetKeyDown(KeyCode.S))
@@ -78,7 +79,16 @@ public class PlayerInput : MonoBehaviour
         }
         if (UInput.GetKeyDown(KeyCode.D))
         {
+            Input.Set(Trigger.Camera_Move_Right, true);
             Input.Set(Trigger.Rotate_Z, true);
+        }
+        if (UInput.GetKeyDown(KeyCode.Escape))
+        {
+            Input.Set(Trigger.Escape, true);
+        }
+        if (UInput.GetKeyDown(KeyCode.Alpha1))
+        {
+            Input.Set(Trigger.ViewMode, true);
         }
 
         if (UInput.GetKeyUp(KeyCode.RightArrow))
@@ -107,6 +117,7 @@ public class PlayerInput : MonoBehaviour
         }
         if (UInput.GetKeyUp(KeyCode.A))
         {
+            Input.Set(Trigger.Camera_Move_Left, false);
             Input.Set(Trigger.Rotate_X, false);
         }
         if (UInput.GetKeyUp(KeyCode.S))
@@ -115,7 +126,16 @@ public class PlayerInput : MonoBehaviour
         }
         if (UInput.GetKeyUp(KeyCode.D))
         {
+            Input.Set(Trigger.Camera_Move_Right, false);
             Input.Set(Trigger.Rotate_Z, false);
+        }
+        if (UInput.GetKeyUp(KeyCode.Escape))
+        {
+            Input.Set(Trigger.Escape, false);
+        }
+        if (UInput.GetKeyUp(KeyCode.Alpha1))
+        {
+            Input.Set(Trigger.ViewMode, false);
         }
 
         Input.OnUpdate();

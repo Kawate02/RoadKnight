@@ -11,7 +11,7 @@ public class Block : Object
 
     public virtual Block Init(float x = 0, float y = 0, float z = 0)
     {
-        base.Init(ObjectType.Model, x*2, y*2, z*2);
+        base.Init(ObjectType.Model, x*Constant.BlockSize, y*Constant.BlockSize, z*Constant.BlockSize);
         state = BlockState.Other;
         return this;
     }
@@ -20,7 +20,7 @@ public class Block : Object
         base.OnUpdate();
         if (state == BlockState.Set && collisonSize.x != 2)
         {
-            collisonSize = new Vector3(2, 2, 2);
+            collisonSize = new Vector3(Constant.BlockSize, Constant.BlockSize, Constant.BlockSize);
         }
         else if (state != BlockState.Set && collisonSize.x != 0)
         {
@@ -34,7 +34,7 @@ public class Block : Object
         var z = pos.z;
         SetPos(x, y, z);
         state = BlockState.Set;
-        Stage.field.SetBlock((int)x, (int)y, (int)z, this);
+        Stage.field.SetBlock(this);
     }
 
     public void ChangeState(BlockState state)

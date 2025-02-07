@@ -1,4 +1,4 @@
-public class Text : UI
+public class Text : UIBase
 {
     public virtual Text Init(string text, int sort, float x = 0, float y = 0, float width = 0, float height = 0)
     {    

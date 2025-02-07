@@ -15,8 +15,8 @@ public class Draw : MonoBehaviour
     List<GameObject> textList = new List<GameObject>();
     List<Object> sprites = new List<Object>(); //SpriteObjectのリストコピー
     List<Object> models = new List<Object>();
-    List<UI> images = new List<UI>();
-    List<UI> texts = new List<UI>();
+    List<UIBase> images = new List<UIBase>();
+    List<UIBase> texts = new List<UIBase>();
     Canvas canvas;
 
     List<MeshFilter> meshes = new List<MeshFilter>();
@@ -156,7 +156,7 @@ public class Draw : MonoBehaviour
                 images2D[i].sprite = SpriteLoader.Load(images[i].image);
                 imageTransform[i].sizeDelta = ConvertToVector(images[i].size);
             }
-            imageTransform[i].anchoredPosition = ConvertToVector(images[i].pos);
+            imageTransform[i].position = ConvertToVector(images[i].pos);
         }
 //------------------------------------------------------------------------------------------------------
         while (textList.Count != texts.Count)
@@ -189,7 +189,7 @@ public class Draw : MonoBehaviour
             }
             if (texts[i].state == UIState.Inactive) texts2D[i].text = "";
             else if (texts[i].state == UIState.Active) texts2D[i].text = texts[i].text;
-            textTransform[i].anchoredPosition = ConvertToVector(texts[i].pos);
+            textTransform[i].position = ConvertToVector(texts[i].pos);
             textTransform[i].sizeDelta = ConvertToVector(texts[i].size);
         }
     }

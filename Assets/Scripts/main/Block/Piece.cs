@@ -8,7 +8,7 @@ public class Piece : Object
 
     public Piece Init(PieceType type, float x = 0, float y = 0, float z = 0)
     {
-        base.Init(ObjectType.Empty, x*2, y*2, z*2);
+        base.Init(ObjectType.Empty, x*Constant.BlockSize, y*Constant.BlockSize, z*Constant.BlockSize);
         switch (type)
         {
             case PieceType.A:
@@ -19,9 +19,9 @@ public class Piece : Object
                 blocks[2] = new BlockA().Init(0, 0, 0);
                 blocks[3] = new BlockA().Init(0, 0, 0);
                 blockPos[0] = new Vector3(0, 0, 0);
-                blockPos[1] = new Vector3(2, 0, 0);
-                blockPos[2] = new Vector3(4, 0, 0);
-                blockPos[3] = new Vector3(4, 2, 0);
+                blockPos[1] = new Vector3(1, 0, 0);
+                blockPos[2] = new Vector3(2, 0, 0);
+                blockPos[3] = new Vector3(2, 1, 0);
                 break;
             case PieceType.B:
                 
@@ -30,6 +30,9 @@ public class Piece : Object
 
         for (int i = 0; i < blocks.Length; i++)
         {
+            blockPos[i].x *= Constant.BlockSize;
+            blockPos[i].y *= Constant.BlockSize;
+            blockPos[i].z *= Constant.BlockSize;
             blocks[i].SetPos(pos.x + blockPos[i].x, pos.y + blockPos[i].y, pos.z + blockPos[i].z);
         }
         blocks[0].Scale(-0.1f, -0.1f, -0.1f);
@@ -71,7 +74,7 @@ public class Piece : Object
                         canPlace = false;
                         break;
                     }
-                    if (Stage.field.GetBlock((int)(block.pos.x + blockPos[i].x), (int)(block.pos.y + blockPos[i].y), (int)(block.pos.z + blockPos[i].z)) != BlockType.Air)
+                    if (Stage.field.GetBlock((int)(block.pos.x + blockPos[i].x)/Constant.BlockSize, (int)(block.pos.y + blockPos[i].y)/Constant.BlockSize, (int)(block.pos.z + blockPos[i].z)/Constant.BlockSize) != BlockType.Air)
                     {
                     
                         canPlace = false;

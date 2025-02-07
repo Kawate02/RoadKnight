@@ -23,16 +23,14 @@ public class Vector2
     }
     public float x;
     public float y;
+    public static Vector2 operator +(Vector2 a, Vector2 b) => new Vector2(a.x + b.x, a.y + b.y);
 
-    new public string ToString()
-    {
-        return "(" + x + ", " + y + ")";
-    }
+    new public string ToString() => "(" + x + ", " + y + ")";
 }
 
-public class UI
+public class UIBase
 {
-    public virtual UI Init(UIType type, float x = 0, float y = 0, float width = 0, float height = 0)
+    public virtual UIBase Init(UIType type, float x = 0, float y = 0, float width = 0, float height = 0)
     {
         this.type = type;
         state = UIState.Active;
@@ -88,7 +86,7 @@ public class UI
     public Vector2 size { get;protected set; }
     public Vector3 scale { get;protected set; }
     public virtual void OnUpdate() {}
-    public async virtual void Move(float x, float y, float z, float offset = 0)
+    public async virtual void Move(float x, float y, float offset = 0)
     {
         if (offset == 0)
         {
@@ -132,11 +130,11 @@ public class UI
             }
         }
     }
-    public void Enable()
+    public virtual void Enable()
     {
         state = UIState.Active;
     }
-    public void Disable()
+    public virtual void Disable()
     {
         state = UIState.Inactive;
     }
@@ -149,26 +147,26 @@ public class UI
 
 public static class ImageList
 {
-    private static List<UI> list = new List<UI>();
+    private static List<UIBase> list = new List<UIBase>();
 
-    public static int Add(UI obj)
+    public static int Add(UIBase obj)
     {
         list.Add(obj);
         return list.Count - 1;
     }
 
-    public static void Remove(UI obj)
+    public static void Remove(UIBase obj)
     {
         list.RemoveAt(obj.id);
     }
-    public static void Set(int id, UI obj)
+    public static void Set(int id, UIBase obj)
     {
         if (id >= list.Count) return;
         list[id] = obj;
         if (obj == null) ListClose(id);
     }
 
-    public static List<UI> GetList()
+    public static List<UIBase> GetList()
     {
         return list;
     }
@@ -192,26 +190,26 @@ public static class ImageList
 
 public static class TextList
 {
-    private static List<UI> list = new List<UI>();
+    private static List<UIBase> list = new List<UIBase>();
 
-    public static int Add(UI obj)
+    public static int Add(UIBase obj)
     {
         list.Add(obj);
         return list.Count - 1;
     }
 
-    public static void Remove(UI obj)
+    public static void Remove(UIBase obj)
     {
         list.RemoveAt(obj.id);
     }
-    public static void Set(int id, UI obj)
+    public static void Set(int id, UIBase obj)
     {
         if (id >= list.Count) return;
         list[id] = obj;
         if (obj == null) ListClose(id);
     }
 
-    public static List<UI> GetList()
+    public static List<UIBase> GetList()
     {
         return list;
     }
@@ -235,26 +233,26 @@ public static class TextList
 
 public static class ButtonList
 {
-    private static List<UI> list = new List<UI>();
+    private static List<UIBase> list = new List<UIBase>();
 
-    public static int Add(UI obj)
+    public static int Add(UIBase obj)
     {
         list.Add(obj);
         return list.Count - 1;
     }
 
-    public static void Remove(UI obj)
+    public static void Remove(UIBase obj)
     {
         list.RemoveAt(obj.id);
     }
-    public static void Set(int id, UI obj)
+    public static void Set(int id, UIBase obj)
     {
         if (id >= list.Count) return;
         list[id] = obj;
         if (obj == null) ListClose(id);
     }
 
-    public static List<UI> GetList()
+    public static List<UIBase> GetList()
     {
         return list;
     }
@@ -278,26 +276,26 @@ public static class ButtonList
 
 public static class UIList
 {
-    private static List<UI> list = new List<UI>();
+    private static List<UIBase> list = new List<UIBase>();
 
-    public static int Add(UI obj)
+    public static int Add(UIBase obj)
     {
         list.Add(obj);
         return list.Count - 1;
     }
 
-    public static void Remove(UI obj)
+    public static void Remove(UIBase obj)
     {
         list.RemoveAt(obj.id);
     }
-    public static void Set(int id, UI obj)
+    public static void Set(int id, UIBase obj)
     {
         if (id >= list.Count) return;
         list[id] = obj;
         if (obj == null) ListClose(id);
     }
 
-    public static List<UI> GetList()
+    public static List<UIBase> GetList()
     {
         return list;
     }

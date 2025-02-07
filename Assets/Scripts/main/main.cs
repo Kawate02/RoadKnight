@@ -1,13 +1,13 @@
 public class main
 {
-    Stage stage = new Stage();
+    Battle battle = new Battle();
     public void Init()
     {
-        stage.Init();
+        battle.Init();
     }
     public void OnUpdate()
     {
-        stage.OnUpdate();
+        battle.OnUpdate();
         EmptyList.OnUpdate();
         SpriteList.OnUpdate();
         ModelList.OnUpdate();
@@ -15,5 +15,16 @@ public class main
         ButtonList.OnUpdate();
         TextList.OnUpdate();
         ImageList.OnUpdate();
+    }
+
+    public void Exit()
+    {
+        SpriteList.GetList().Clear();
+        ModelList.GetList().Clear();
+        EmptyList.GetList().Clear();
+        ButtonList.GetList().Clear();
+        TextList.GetList().Clear();
+        ImageList.GetList().Clear();
+        UIList.GetList().Clear();
     }
 }

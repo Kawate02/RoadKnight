@@ -30,26 +30,13 @@ public static class Cam
             }
         }
     }
-
-    public static async void Rotate(float x, float y, float z, float offset = 0)
+    public static void SetPos(float x, float y, float z)
     {
-        if (offset == 0)
-        {
-            rot.x += x;
-            rot.y += y;
-            rot.z += z;
-        }
-        else
-        {
-            float timer = offset;
-            while (timer > 0)
-            {
-                rot.x += x / offset;
-                rot.y += y / offset;
-                rot.z += z / offset;
-                timer -= 1;
-                await System.Threading.Tasks.Task.Delay(1);
-            }
-        }
+        pos = new Vector3(x, y, z);
+    }
+
+    public static void SetRotate(float x, float y, float z)
+    {
+        rot = new Vector3(x, y, z);
     }
 }

@@ -1,33 +1,43 @@
+using System.Collections.Generic;
+
 public class Stage
 {
     public static FieldManager field = new FieldManager();
-    Piece piece1;
-    Block[]blocks = new Block[4]; 
-    Button button = new Button();
-    Unit unit = new Unit01();
+    public static MoveArea moveArea { get; private set; } = new MoveArea();
+    public static SkillArea skillArea { get; private set; } = new SkillArea();
+    Piece piece;
+    List<Block> blocks = new List<Block>();
+    
     public void Init()
     {
         Cam.Init(4, 10, -4, 45, 0, 0);
         field.Init();
-        piece1 = new Piece().Init(PieceType.A);
-        piece1.ChangeState(BlockState.Set);
-        blocks[0] = new BlockA().Init(0, 0, 0);
-        blocks[1] = new BlockA().Init(1, 0, 0);
-        blocks[2] = new BlockA().Init(0, 0, 7);
-        blocks[3] = new BlockA().Init(3, 0, 0);
-        for (int i = 0; i < blocks.Length; i++)
+        for (int i = 0; i < Constant.FieldWidth; i++)
+        {
+            for (int j = 0; j < Constant.FieldDepth; j++)
+            {
+                blocks.Add(new BlockA().Init(i, 0, j));
+            }
+        }
+        blocks.Add(new BlockA().Init(4, 1, 4));
+        blocks.Add(new BlockA().Init(3, 1, 4));
+        blocks.Add(new BlockA().Init(3, 2, 4));
+        blocks.Add(new BlockA().Init(2, 3, 4));
+        blocks.Add(new BlockA().Init(2, 2, 4));
+        blocks.Add(new BlockA().Init(5, 3, 6));
+        for (int i = 0; i < blocks.Count; i++)
         {
             blocks[i].SetBlock();
         }
-        button.Init(0, 0, 0, 200, 200);
-        unit.Init(0, 2, 0);
     }
     public void OnUpdate()
     {
-        if (Input.GetAction(Trigger.Mouse_Right).down)
+    }
+    public void Destroy()
+    {
+        for (int i = 0; i < blocks.Count; i++)
         {
-            Piece piece = new Piece().Init(PieceType.A);
-            piece.ChangeState(BlockState.Hold);
+            blocks[i].Destroy();
         }
     }
 }
