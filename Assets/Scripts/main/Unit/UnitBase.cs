@@ -19,26 +19,30 @@ public class Unit : Object
     public List<SkillBase> skills { get; protected set; } = new List<SkillBase>();
     public List<Piece> pieces { get; protected set; } = new List<Piece>();
     public Direction direction { get; protected set; }
-    protected float _max_hp = 0;
-    protected float _atk = 0;
-    protected float _def = 0;
-    protected float _spd = 0;
+    protected int _max_hp = 0;
+    protected int _atk = 0;
+    protected int _def = 0;
+    protected int _spd = 0;
     protected int _move_range = 0;
-    public float max_hp { get; protected set; }
-    public float hp { get; protected set; }
-    public float atk { get; protected set; }
-    public float def { get; protected set; }
-    public float spd { get; protected set; }
+    public int max_hp { get; protected set; }
+    public int hp { get; protected set; }
+    public int atk { get; protected set; }
+    public int def { get; protected set; }
+    public int spd { get; protected set; }
     public int move_range { get; protected set; } = 2;
+    public int sort;
+    public System.Action DamageEvent;
+    public System.Action DeadEvent;
     public virtual Unit Init(Owner owner, int id, float x = 0, float y = 0, float z = 0)
     {
         image = GetImage(id);
         base.Init(ObjectType.Sprite, Constant.BlockSize * x, Constant.BlockSize * y, Constant.BlockSize * z);
         this.owner = owner;
-        if (owner == Owner.Player) direction = Direction.Right;
-        if (owner == Owner.Enemy) direction = Direction.Left;
+        if (owner == Owner.Player) SetDirection(Direction.Right);
+        if (owner == Owner.Enemy) SetDirection(Direction.Left);
         GetParameter(id);
         ParameterCal();
+        Debug.Log(max_hp + " " + hp + " " + atk + " " + def + " " + spd + " " + move_range);
         Rotate(Cam.rot.x-20, Cam.rot.y, Cam.rot.z);
         skills.Add(new Skill().Init(1));
         skills.Add(new Skill().Init(1));
@@ -46,7 +50,12 @@ public class Unit : Object
         Stage.field.SetUnit(this, pos);
         return this;
     }
-    public void SetDirection(Direction direction) => this.direction = direction;
+    public void SetDirection(Direction direction)
+    {
+        this.direction = direction;
+        if (direction == Direction.Right) SetScale(1, 1, 1);
+        else if (direction == Direction.Left) SetScale(-1, 1, 1);
+    }
     private void GetParameter(int id)
     {
         switch (id)
@@ -95,6 +104,7 @@ public class Unit : Object
     {
         var damage = max_hp - hp;
         max_hp = _max_hp;
+        hp = max_hp - damage;
         atk = _atk;
         def = _def;
         spd = _spd;
@@ -131,10 +141,11 @@ public class Unit : Object
             }
         }
     }
-    public virtual void Damage(float dmg)
+    public virtual void Damage(int dmg)
     {
-        DamageAction(dmg);
+        if (hp <= 0) return;
         hp -= dmg;
+        DamageAction(dmg);
         if (hp <= 0) 
         {
             hp = 0;
@@ -177,6 +188,7 @@ public class Unit : Object
     }
     protected virtual void DamageAction(float dmg) 
     {
+        DamageEvent?.Invoke();
         for (int i = 0; i < effects.Count; i++)
         {
             effects[i].DamageAction(this, dmg);
@@ -184,6 +196,8 @@ public class Unit : Object
     }
     protected virtual void DeadAction() 
     {
+        DeadEvent?.Invoke();
+        Stage.field.SetUnit(null, pos);
         for (int i = 0; i < effects.Count; i++)
         {
             effects[i].DeadAction(this);
@@ -196,4 +210,5 @@ public class Unit : Object
             skills[i].ExeEvent += () => callback();
         }
     }
+    public bool IsEnemy(Unit target) { return target.owner != owner; }
 }

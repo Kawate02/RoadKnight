@@ -1,10 +1,13 @@
 using System;
+using System.Threading.Tasks;
+using UnityEditor.Timeline.Actions;
 
 public class Piece : Object
 {
     Vector3[] blockPos;
     Block[] blocks;
     public BlockState state { get; protected set; }
+    public event System.Action CancelEvent;
 
     public Piece Init(PieceType type, float x = 0, float y = 0, float z = 0)
     {
@@ -35,16 +38,21 @@ public class Piece : Object
             blockPos[i].z *= Constant.BlockSize;
             blocks[i].SetPos(pos.x + blockPos[i].x, pos.y + blockPos[i].y, pos.z + blockPos[i].z);
         }
-        blocks[0].Scale(-0.1f, -0.1f, -0.1f);
+        blocks[0].SetScale(0.9f, 0.9f, 0.9f);
 
 
         return this;
     }
-
-    public override void OnUpdate()
+    public async void Holding()
     {
-        if (state == BlockState.Hold)
+        state = BlockState.Hold;
+        while (state == BlockState.Hold)
         {
+            if (Input.GetAction(Trigger.Escape).down) 
+            {
+                Cancel();
+                break;
+            }
             SetPos(Input.WorldMousePosition.x, Input.WorldMousePosition.y, Input.WorldMousePosition.z);
             if (Input.Scroll != 0)
             {
@@ -68,15 +76,11 @@ public class Piece : Object
                 bool canPlace = true;
                 for (int i = 1; i < blocks.Length; i++)
                 {
-                    if (block.pos.x + blockPos[i].x >= Constant.FieldWidth*2 || block.pos.y + blockPos[i].y >= Constant.FieldHeight*2 || block.pos.z + blockPos[i].z >= Constant.FieldDepth*2 
-                    || block.pos.x + blockPos[i].x < 0 || block.pos.y + blockPos[i].y < 0 || block.pos.z + blockPos[i].z < 0)
+                    Debug.Log(Stage.field.CanPlace((block.pos + blockPos[i])/Constant.BlockSize));
+                    Debug.Log (Stage.field.CanPlace(new Vector3(1, 0, 2)));
+                    Debug.Log(((block.pos + blockPos[i])/Constant.BlockSize).ToString());
+                    if (!Stage.field.CanPlace((block.pos + blockPos[i])/Constant.BlockSize) || Stage.field.ThereIsUnit((block.pos + blockPos[i])/Constant.BlockSize))
                     {
-                        canPlace = false;
-                        break;
-                    }
-                    if (Stage.field.GetBlock((int)(block.pos.x + blockPos[i].x)/Constant.BlockSize, (int)(block.pos.y + blockPos[i].y)/Constant.BlockSize, (int)(block.pos.z + blockPos[i].z)/Constant.BlockSize) != BlockType.Air)
-                    {
-                    
                         canPlace = false;
                         break;
                     }
@@ -91,10 +95,17 @@ public class Piece : Object
                         {
                             blocks[i].SetBlock();
                         }
+                        TurnEndFlag.EndTurn.Invoke();
                     }
                 }
             }
+            await Task.Delay(1);
         }
+    }
+    void Cancel()
+    {
+        Destroy();
+        CancelEvent?.Invoke();
     }
 
     public override void Move(float x, float y, float z, float offset = 0)
@@ -153,6 +164,13 @@ public class Piece : Object
         for (int i = 0; i < blocks.Length; i++)
         {
             blocks[i].ChangeState(state);
+        }
+    }
+    public override void Destroy()
+    {
+        for (int i = 0; i < blocks.Length; i++)
+        {
+            blocks[i].Destroy();
         }
     }
 }

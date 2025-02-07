@@ -3,7 +3,7 @@ using System.Numerics;
 
 public class FieldManager
 {
-    private Field[,,] field = new Field[Constant.FieldWidth, Constant.FieldHeight+1, Constant.FieldDepth];
+    public Field[,,] field { get; private set; } = new Field[Constant.FieldWidth, Constant.FieldHeight+1, Constant.FieldDepth];
     private Sprite[,] stitches = new Sprite[Constant.FieldWidth, Constant.FieldDepth];
 
     public void Init()
@@ -56,7 +56,7 @@ public class FieldManager
     }
     public bool CanPlace(Vector3 pos)
     {
-        if (pos.y <= 0 || pos.y > Constant.FieldHeight) return false;
+        if (pos.y < 0 || pos.y > Constant.FieldHeight) return false;
         if (pos.x < 0 || pos.x >= Constant.FieldWidth) return false;
         if (pos.z < 0 || pos.z >= Constant.FieldDepth) return false;
         return field[(int)pos.x, (int)pos.y, (int)pos.z].type == BlockType.Air;

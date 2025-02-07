@@ -9,7 +9,7 @@ public class Skill
         switch (id)
         {
             case 1:
-                return new Skill01().Init();
+                return new Skill01();
             default:
                 return null;
         }
@@ -23,8 +23,12 @@ public class SkillBase
     public event System.Action CancelEvent;
     public event System.Action ExeEvent;
     bool cancel;
+    protected Unit owner;
+    public virtual SkillBase Init() => this;
     public virtual async void Wait(Unit owner)
     {
+        this.owner = owner;
+        Init();
         cancel = false;
         Block block;
         Vector3 oldPos = new Vector3(owner.pos);
@@ -34,32 +38,34 @@ public class SkillBase
             if (cancel) break;
             if (oldPos != owner.pos) SetSkillDirection(owner);
             oldPos = new Vector3(owner.pos);
-            if (Input.GetAction(Trigger.Mouse_Right).down)
+            if (Input.GetAction(Trigger.Mouse_Right).down || Input.GetAction(Trigger.Escape).down)
             {
                 Cancel();
                 break;
             }
             if (Input.GetAction(Trigger.Mouse_Left).down)
             {
-                block = (Block)ModelList.GetList()[Input.ChoiceBlock];
-                if (block != null)
+                if (Input.ChoiceBlock != -1) 
                 {
-                    var dir = SetDirection(owner, block.pos);
-                    if (dir == owner.direction)
+                    block = (Block)ModelList.GetList()[Input.ChoiceBlock];
+                    if (block != null)
                     {
-                        Exe(block);
-                        break;
-                    }
-                    else
-                    {
-                        owner.SetDirection(SetDirection(owner, block.pos));
-                        SetSkillDirection(owner);
+                        var dir = SetDirection(owner, block.pos);
+                        if (dir == owner.direction)
+                        {
+                            Exe();
+                            break;
+                        }
+                        else
+                        {
+                            owner.SetDirection(SetDirection(owner, block.pos));
+                            SetSkillDirection(owner);
+                        }
                     }
                 }
             }
             await Task.Delay(1);
         }
-        Debug.Log("Wait End");
     }
     private Direction SetDirection(Unit owner, Vector3 v)
     {
@@ -99,8 +105,11 @@ public class SkillBase
                     break;
             }
         }
-        for (int i = 0; i < _range.Count; i++) Debug.Log(range[i].ToString());
-        Stage.skillArea.AreaCal(range);
+        AreaCal();
+    }
+    protected virtual void AreaCal()
+    {
+        Stage.skillArea.Destroy();
     }
     public void Cancel()
     {
@@ -108,9 +117,18 @@ public class SkillBase
         CancelEvent?.Invoke();
         cancel = true;
     }
-    public virtual void Exe(Block block)
+    public virtual void Exe()
     {
-        Stage.skillArea.Destroy();
         ExeEvent?.Invoke();
+    }
+    public List<Unit> GetUnits(List<Vector3> pos)
+    {
+        List<Unit> units = new List<Unit>();
+        foreach (var item in pos)
+        {
+            Unit u = Stage.field.field[(int)item.x, (int)item.y, (int)item.z].unit;
+            if (u != null) units.Add(u);
+        }
+        return units;
     }
 }

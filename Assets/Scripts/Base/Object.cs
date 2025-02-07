@@ -179,26 +179,11 @@ public class Object
         }
     }
 
-    public async virtual void Scale(float x, float y, float z, float offset = 0)
+    public virtual void SetScale(float x, float y, float z)
     {
-        if (offset == 0)
-        {
-            scale.x += x;
-            scale.y += y;
-            scale.z += z;
-        }
-        else
-        {
-            float timer = offset;
-            while (timer > 0)
-            {
-                scale.x += x / offset;
-                scale.y += y / offset;
-                scale.z += z / offset;
-                timer -= 1;
-                await Task.Delay(1);
-            }
-        }
+        scale.x = x;
+        scale.y = y;
+        scale.z = z;
     }
     public void IdAdjust(int id)
     {

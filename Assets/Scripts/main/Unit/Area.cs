@@ -47,6 +47,7 @@ public class AreaBase
         {
             spriteList[i].Destroy();
         }
+        list.Clear();
     }
 }
 public class MoveArea : AreaBase
@@ -72,18 +73,9 @@ public class MoveArea : AreaBase
 }
 public class SkillArea : AreaBase
 {
-    public void AreaCal(List<Vector3> pos)
+    new public void AddPos(Vector3 v)
     {
-        base.AreaCal(1);
-        for (int i = 0; i < pos.Count; i++)
-        {
-            AddPos(pos[i]);
-        }
-        Enable(Path.UI_Attack_Area);
-    }
-    protected override void AddPos(Vector3 v)
-    {
-        if (!HasPos(v) && Stage.field.CanPlace(v) && Stage.field.CanGround(v))
+        if (!HasPos(v))
         {
             v.y += 0.05f;
             list.Add(v);

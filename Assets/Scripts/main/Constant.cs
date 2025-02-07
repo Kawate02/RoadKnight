@@ -4,6 +4,8 @@ public static class Constant
     public const int FieldHeight = 4;
     public const int FieldDepth = 8;
     public const int BlockSize = 2;
+    public const int ScreenWidth = 1920;
+    public const int ScreenHeight = 1080;
 }
 
 public static class UnitParameter
@@ -36,11 +38,18 @@ public static class UnitParameter
         public const int move_range = 4;
     }
 }
+public static class SkillDataBase
+{
+    public class Skill01
+    {
+        public const float attack_magnification = 2.0f;
+    }
+}
 public static class Formula
 {
-    public static float Damage(Unit atker, Unit target)
+    public static int Damage(int owner_atk, int target_def)
     {
-        float dmg = atker.atk - target.def;
+        int dmg = owner_atk - target_def;
         return dmg;
     }
 }

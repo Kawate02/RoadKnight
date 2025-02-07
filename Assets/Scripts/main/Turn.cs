@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+
 public enum TurnState
 {
     ActionSelecting,
@@ -13,13 +15,23 @@ public class Turn
     TurnState state = TurnState.ActionSelecting;
     public void Init(Unit[] units)
     {
+        TurnEndFlag.EndTurn += EndTurn;
         this.units = units;
+        for (int i = 0; i < units.Length; i++)
+        {
+            Unit u = units[i];
+            u.DeadEvent += () => UnitDead(u);
+        }
         SortUnits(units);
-        for (int i = 0; i < units.Length; i++) units[i].EndFlag(EndTurn);
         StartTurn(units[0]);
+    }
+    void UnitDead(Unit unit)
+    {
+        units[unit.sort] = null;
     }
     public void StartTurn(Unit unit)
     {
+        Debug.Log(unit.sort);
         crrentUnit = unit;
         turnUI = new UI01().Init(0, crrentUnit, 350, 250);
         Cam.Init(crrentUnit.pos.x, Cam.pos.y, crrentUnit.pos.z-5, 45, 0, 0);
@@ -75,7 +87,7 @@ public class Turn
         crrentUnit.EndTurnAction();
         crrentUnit = null;
         turnUI.Destroy();
-        StartTurn(units[turnCount.Next()]);
+        StartTurn(units[turnCount.Next(units)]);
     }
     private void SortUnits(Unit[] units)
     {
@@ -91,6 +103,7 @@ public class Turn
                 }
             }
         }
+        for (int i = 0; i < units.Length; i++) units[i].sort = i;
     }
 }
 
@@ -98,14 +111,28 @@ public class TurnCount
 {
     public int turn { get; private set; } = 0;
     public int turnInTurn { get; private set; } = 0;
-    public int Next()
+    public int Next(Unit[] units)
     {
         turnInTurn += 1;
-        if (turnInTurn == 6)
+        if (turnInTurn == units.Length)
         {
             turn += 1;
             turnInTurn = 0;
         }
+        while (units[turnInTurn] == null)
+        {
+            turnInTurn += 1;
+            if (turnInTurn == units.Length)
+            {
+                turn += 1;
+                turnInTurn = 0;
+            }
+        }
         return turnInTurn;
     }
+}
+
+public static class TurnEndFlag
+{
+    public static System.Action EndTurn { get; set; }
 }

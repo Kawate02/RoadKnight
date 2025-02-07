@@ -13,8 +13,13 @@ public class UI01 : UI
         buttons.Add(new Button().Init(sort + 1, x, y + 200, width, 80, Path.UI_Button, null, Path.UI_ButtonOver));
         buttons[2].ClickEvent += async () => {
             await Task.Delay(1);
-            children = new UI02().Init(sort + 2, unit, 350, 450, this);
+            children = new UI02().Init(sort + 3, unit, 350, 450, this);
             };
+        buttons[1].ClickEvent += async () => { 
+            await Task.Delay(1);
+            children = new UI07().Init(sort + 3, unit, 350, 150, this); 
+            };
+        buttons[0].ClickEvent += () => { TurnEndFlag.EndTurn.Invoke(); };
         return this;
     }
 
