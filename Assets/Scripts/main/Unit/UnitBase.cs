@@ -1,9 +1,11 @@
+using System;
 using System.Collections.Generic;
 
 public enum Owner
 {
     Player,
-    Enemy
+    Enemy,
+    None
 }
 public enum Direction
 {
@@ -17,7 +19,7 @@ public class Unit : Object
     public Owner owner { get; protected set; } = Owner.Player;
     public List<Effect> effects { get; protected set; } = new List<Effect>();
     public List<SkillBase> skills { get; protected set; } = new List<SkillBase>();
-    public List<Piece> pieces { get; protected set; } = new List<Piece>();
+    public PieceType[] pieces { get; protected set; }
     public Direction direction { get; protected set; }
     protected int _max_hp = 0;
     protected int _atk = 0;
@@ -31,7 +33,8 @@ public class Unit : Object
     public int spd { get; protected set; }
     public int move_range { get; protected set; } = 2;
     public int sort;
-    public System.Action DamageEvent;
+    private int[] skill_id;
+    public EventHandler<DamageEventArgs> DamageEvent;
     public System.Action DeadEvent;
     public virtual Unit Init(Owner owner, int id, float x = 0, float y = 0, float z = 0)
     {
@@ -42,13 +45,16 @@ public class Unit : Object
         if (owner == Owner.Enemy) SetDirection(Direction.Left);
         GetParameter(id);
         ParameterCal();
-        Debug.Log(max_hp + " " + hp + " " + atk + " " + def + " " + spd + " " + move_range);
-        Rotate(Cam.rot.x-20, Cam.rot.y, Cam.rot.z);
-        skills.Add(new Skill().Init(1));
-        skills.Add(new Skill().Init(1));
-        skills.Add(new Skill().Init(1));
+        Rotate(Cam.rot.x, Cam.rot.y, Cam.rot.z);
         Stage.field.SetUnit(this, pos);
         return this;
+    }
+    public override void OnUpdate()
+    {
+        for (int i = 0; i < effects.Count; i++)
+        {
+            effects[i].OnUpdate(this);
+        }
     }
     public void SetDirection(Direction direction)
     {
@@ -62,11 +68,13 @@ public class Unit : Object
         {
             case 0:
             name = UnitParameter.Unit01.name;
-            _max_hp = UnitParameter.Unit01.max_hp; 
+            _max_hp = UnitParameter.Unit01.max_hp;
             _atk = UnitParameter.Unit01.atk;
             _def = UnitParameter.Unit01.def;
             _spd = UnitParameter.Unit01.spd;
             _move_range = UnitParameter.Unit01.move_range;
+            skill_id = UnitParameter.Unit01.skill_id;
+            pieces = UnitParameter.Unit01.pieces;
             break;
             case 1:
             name = UnitParameter.Unit02.name;
@@ -75,6 +83,8 @@ public class Unit : Object
             _def = UnitParameter.Unit02.def;
             _spd = UnitParameter.Unit02.spd;
             _move_range = UnitParameter.Unit02.move_range;
+            skill_id = UnitParameter.Unit02.skill_id;
+            pieces = UnitParameter.Unit02.pieces;
             break;
             case 2:
             name = UnitParameter.Unit03.name;
@@ -83,7 +93,13 @@ public class Unit : Object
             _def = UnitParameter.Unit03.def;
             _spd = UnitParameter.Unit03.spd;
             _move_range = UnitParameter.Unit03.move_range;
+            skill_id = UnitParameter.Unit03.skill_id;
+            pieces = UnitParameter.Unit03.pieces;
             break;
+        }
+        for (int i = 0; i < skill_id.Length; i++)
+        {
+            skills.Add(new Skill().Init(skill_id[i]));
         }
     }
     private string GetImage(int id)
@@ -91,11 +107,11 @@ public class Unit : Object
         switch (id)
         {
             case 0:
-            return Path.Sheld_Knocker;
+            return Path.Wally;
             case 1:
-            return Path.Sheld_Knocker;
+            return Path.Shield_Knocker;
             case 2:
-            return Path.Sheld_Knocker;
+            return Path.Pega;
             default:
             return "";
         }
@@ -111,12 +127,12 @@ public class Unit : Object
         move_range = _move_range;
         for (int i = 0; i < effects.Count; i++) 
         {
-            max_hp += _max_hp * effects[i].hp_buff;
+            max_hp = max_hp + (int)(_max_hp * effects[i].hp_buff) < 0 ? 0 : max_hp + (int)(_max_hp * effects[i].hp_buff);
             hp = max_hp - damage;
-            atk += _atk * effects[i].atk_buff;
-            def += _def * effects[i].def_buff;
-            spd += _spd * effects[i].spd_buff;
-            move_range += effects[i].move_range_buff;
+            atk = atk + (int)(_atk * effects[i].atk_buff) < 0 ? 0 : atk + (int)(_atk * effects[i].atk_buff);
+            def = def + (int)(_def * effects[i].def_buff) < 0 ? 0 : def + (int)(_def * effects[i].def_buff);
+            spd = spd + (int)(_spd * effects[i].spd_buff) < 0 ? 0 : spd + (int)(_spd * effects[i].spd_buff);
+            move_range = move_range + effects[i].move_range_buff < 0 ? 0 : move_range + effects[i].move_range_buff;
         }
     }
 
@@ -141,11 +157,26 @@ public class Unit : Object
             }
         }
     }
+    public override void SetPos(float x, float y, float z)
+    {
+        Stage.field.SetUnit(null, pos);
+        base.SetPos(x, y, z);
+        Stage.field.SetUnit(this, pos);
+    }
+    public bool HasEffect(Effect effect) 
+    { 
+        for (int i = 0; i < effects.Count; i++)
+        {
+            if (effects[i].id == effect.id) return true;
+        }
+        return false;
+    }
     public virtual void Damage(int dmg)
     {
+        Debug.Log(dmg);
         if (hp <= 0) return;
+        DamageAction(ref dmg);
         hp -= dmg;
-        DamageAction(dmg);
         if (hp <= 0) 
         {
             hp = 0;
@@ -186,13 +217,13 @@ public class Unit : Object
             effects[i].AttackAction(this, tardet);
         }
     }
-    protected virtual void DamageAction(float dmg) 
+    protected virtual void DamageAction(ref int dmg) 
     {
-        DamageEvent?.Invoke();
         for (int i = 0; i < effects.Count; i++)
         {
-            effects[i].DamageAction(this, dmg);
+            effects[i].DamageAction(this, ref dmg);
         }
+        DamageEvent?.Invoke(this, new DamageEventArgs(dmg));
     }
     protected virtual void DeadAction() 
     {
@@ -203,12 +234,22 @@ public class Unit : Object
             effects[i].DeadAction(this);
         }
     }
-    public void EndFlag(System.Action callback)
-    {
-        for (int i = 0; i < skills.Count; i++)
-        {
-            skills[i].ExeEvent += () => callback();
-        }
-    }
     public bool IsEnemy(Unit target) { return target.owner != owner; }
+    public void AddEffect(Effect effect) 
+    { 
+        effects.Add(effect); 
+        effect.Init(this);
+        ParameterCal();
+    }
+    public void RemoveEffect(Effect effect) 
+    { 
+        effects.Remove(effect);
+        ParameterCal();
+    }
 }
+public class DamageEventArgs : EventArgs
+    {
+        public DamageEventArgs(int damage) :base()
+        { this.damage = damage; }
+        public int damage;
+    }

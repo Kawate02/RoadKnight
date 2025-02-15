@@ -44,19 +44,19 @@ public class PlayerInput : MonoBehaviour
             Input.SetScroll(0);
         }
 
-        if (UInput.GetKeyDown(KeyCode.RightArrow))
+        if (UInput.GetKeyDown(KeyCode.RightArrow) || UInput.GetKeyDown(KeyCode.D))
         {
             Input.Set(Trigger.Move_Right, true);
         }
-        if (UInput.GetKeyDown(KeyCode.LeftArrow))
+        if (UInput.GetKeyDown(KeyCode.LeftArrow) || UInput.GetKeyDown(KeyCode.A))
         {
             Input.Set(Trigger.Move_Left, true);
         }
-        if (UInput.GetKeyDown(KeyCode.UpArrow))
+        if (UInput.GetKeyDown(KeyCode.UpArrow) || UInput.GetKeyDown(KeyCode.W))
         {
             Input.Set(Trigger.Move_Up, true);
         }
-        if (UInput.GetKeyDown(KeyCode.DownArrow))
+        if (UInput.GetKeyDown(KeyCode.DownArrow) || UInput.GetKeyDown(KeyCode.S))
         {
             Input.Set(Trigger.Move_Down, true);
         }
@@ -91,19 +91,24 @@ public class PlayerInput : MonoBehaviour
             Input.Set(Trigger.ViewMode, true);
         }
 
-        if (UInput.GetKeyUp(KeyCode.RightArrow))
+        if (UInput.GetKeyDown(KeyCode.Space))
+        {
+            Input.Set(Trigger.Space, true);
+        }
+
+        if (UInput.GetKeyUp(KeyCode.RightArrow) || UInput.GetKeyUp(KeyCode.D))
         {
             Input.Set(Trigger.Move_Right, false);
         }
-        if (UInput.GetKeyUp(KeyCode.LeftArrow))
+        if (UInput.GetKeyUp(KeyCode.LeftArrow) || UInput.GetKeyUp(KeyCode.A))
         {
             Input.Set(Trigger.Move_Left, false);
         }
-        if (UInput.GetKeyUp(KeyCode.UpArrow))
+        if (UInput.GetKeyUp(KeyCode.UpArrow) || UInput.GetKeyUp(KeyCode.W))
         {
             Input.Set(Trigger.Move_Up, false);
         }
-        if (UInput.GetKeyUp(KeyCode.DownArrow))
+        if (UInput.GetKeyUp(KeyCode.DownArrow) || UInput.GetKeyUp(KeyCode.S))
         {
             Input.Set(Trigger.Move_Down, false);
         }
@@ -136,6 +141,11 @@ public class PlayerInput : MonoBehaviour
         if (UInput.GetKeyUp(KeyCode.Alpha1))
         {
             Input.Set(Trigger.ViewMode, false);
+        }
+
+        if (UInput.GetKeyUp(KeyCode.Space))
+        {
+            Input.Set(Trigger.Space, false);
         }
 
         Input.OnUpdate();

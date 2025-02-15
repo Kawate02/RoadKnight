@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Unity.VisualScripting;
 
 public class Skill
 {
@@ -8,8 +9,24 @@ public class Skill
     {
         switch (id)
         {
-            case 1:
+            case 0:
                 return new Skill01();
+            case 1:
+                return new Skill02();
+            case 2:
+                return new Skill03();
+            case 3:
+                return new Skill04();
+            case 4:
+                return new Skill05();
+            case 5:
+                return new Skill06();
+            case 6:
+                return new Skill07();
+            case 7:
+                return new Skill08();
+            case 8:
+                return new Skill09();
             default:
                 return null;
         }
@@ -19,28 +36,34 @@ public class SkillBase
 {
     protected List<Vector3> _range;
     public List<Vector3> range { get; protected set; }
-    Block targetBlock;
+    public List<Vector3> activeRange { get; protected set; } = new List<Vector3>();
+    protected Block targetBlock;
     public event System.Action CancelEvent;
-    public event System.Action ExeEvent;
     bool cancel;
     protected Unit owner;
     public virtual SkillBase Init() => this;
     public virtual async void Wait(Unit owner)
     {
         this.owner = owner;
+        targetBlock = null;
         Init();
         cancel = false;
         Block block;
         Vector3 oldPos = new Vector3(owner.pos);
         SetSkillDirection(owner);
+        await AreaCal();
         while (targetBlock == null)
         {
             if (cancel) break;
-            if (oldPos != owner.pos) SetSkillDirection(owner);
+            if (oldPos != owner.pos) 
+            {
+                SetSkillDirection(owner);
+                await AreaCal();
+            }
             oldPos = new Vector3(owner.pos);
             if (Input.GetAction(Trigger.Mouse_Right).down || Input.GetAction(Trigger.Escape).down)
             {
-                Cancel();
+                await Cancel();
                 break;
             }
             if (Input.GetAction(Trigger.Mouse_Left).down)
@@ -51,15 +74,26 @@ public class SkillBase
                     if (block != null)
                     {
                         var dir = SetDirection(owner, block.pos);
+                        var bpos = new Vector3(block.pos);
+                        bpos /= Constant.BlockSize;
+                        bpos.y += 1;
                         if (dir == owner.direction)
                         {
-                            Exe();
-                            break;
+                            foreach (var item in activeRange)
+                            {
+                                if (bpos == item)
+                                {
+                                    targetBlock = block;
+                                    Exe(bpos);
+                                    break;
+                                }
+                            }
                         }
                         else
                         {
-                            owner.SetDirection(SetDirection(owner, block.pos));
+                            owner.SetDirection(dir);
                             SetSkillDirection(owner);
+                            await AreaCal();
                         }
                     }
                 }
@@ -80,6 +114,14 @@ public class SkillBase
             if (v.z > 0) return Direction.Up;
             else return Direction.Down;
         }
+    }
+    protected void AddPos(Vector3 v)
+    {
+        if (Stage.field.CanPlace(v) && Stage.field.CanGround(v))
+            {
+                activeRange.Add(v);
+                Stage.skillArea.AddPos(new Vector3(v));
+            }
     }
     private void SetSkillDirection(Unit owner)
     {
@@ -105,23 +147,22 @@ public class SkillBase
                     break;
             }
         }
-        AreaCal();
     }
-    protected virtual void AreaCal()
+    protected virtual async Task AreaCal(Vector3 pos = null)
     {
-        Stage.skillArea.Destroy();
+        await Stage.skillArea.Destroy();
     }
-    public void Cancel()
+    public async Task Cancel()
     {
-        Stage.skillArea.Destroy();
+        await Stage.skillArea.Destroy();
         CancelEvent?.Invoke();
         cancel = true;
     }
-    public virtual void Exe()
+    public virtual void Exe(Vector3 pos)
     {
-        ExeEvent?.Invoke();
+
     }
-    public List<Unit> GetUnits(List<Vector3> pos)
+    protected List<Unit> GetUnits(List<Vector3> pos)
     {
         List<Unit> units = new List<Unit>();
         foreach (var item in pos)
@@ -130,5 +171,11 @@ public class SkillBase
             if (u != null) units.Add(u);
         }
         return units;
+    }
+    protected Unit GetUnits(Vector3 pos)
+    {
+        Unit u = Stage.field.field[(int)pos.x, (int)pos.y, (int)pos.z].unit;
+        if (u != null) return u;
+        return u;
     }
 }

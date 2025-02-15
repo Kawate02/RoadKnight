@@ -1,14 +1,14 @@
+
 public class main
 {
     Battle battle = new Battle();
     public void Init()
     {
-        battle.Init();
+        SceneManager.ChangeScene(Scene.Title);
     }
     public void OnUpdate()
     {
-        //Debug.Log("Empty  : " + EmptyList.GetList().Count + "\nSprite : " + SpriteList.GetList().Count + "\nModel  : " + ModelList.GetList().Count + "\nUI     : " + UIList.GetList().Count + "\nButton : " + ButtonList.GetList().Count + "\nText   : " + TextList.GetList().Count + "\nImage  : " + ImageList.GetList().Count);
-        battle.OnUpdate();
+        SceneManager.OnUpdate();
         EmptyList.OnUpdate();
         SpriteList.OnUpdate();
         ModelList.OnUpdate();

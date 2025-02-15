@@ -20,6 +20,9 @@ public class UI01 : UI
             children = new UI07().Init(sort + 3, unit, 350, 150, this); 
             };
         buttons[0].ClickEvent += () => { TurnEndFlag.EndTurn.Invoke(); };
+        texts.Add(new Text().Init("SKILL", Color.black, 60, sort + 2, x + 10, y + 270, width));
+        texts.Add(new Text().Init("BLOCK", Color.black, 60, sort + 2, x + 10, y + 170, width));
+        texts.Add(new Text().Init("SKIP", Color.black, 60, sort + 2, x + 10, y + 70, width));
         return this;
     }
 

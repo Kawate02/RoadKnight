@@ -1,9 +1,13 @@
+using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
 public enum TurnState
 {
     ActionSelecting,
-    Viewing
+    Viewing,
+    BlockPlacing
 }
 public class Turn
 {
@@ -13,6 +17,7 @@ public class Turn
     View view = new View();
     TurnCount turnCount = new TurnCount();
     TurnState state = TurnState.ActionSelecting;
+    public EventHandler<EndBattleEventArgs> EndBattle { get; set; }
     public void Init(Unit[] units)
     {
         TurnEndFlag.EndTurn += EndTurn;
@@ -29,56 +34,76 @@ public class Turn
     {
         units[unit.sort] = null;
     }
-    public void StartTurn(Unit unit)
+    public async void StartTurn(Unit unit)
     {
-        Debug.Log(unit.sort);
         crrentUnit = unit;
+        await Stage.moveArea.AreaCal(crrentUnit.pos, crrentUnit.move_range);
         turnUI = new UI01().Init(0, crrentUnit, 350, 250);
         Cam.Init(crrentUnit.pos.x, Cam.pos.y, crrentUnit.pos.z-5, 45, 0, 0);
         crrentUnit.StartTurnAction();
-        Stage.moveArea.AreaCal(crrentUnit.pos, crrentUnit.move_range);
     }
-    public void OnUpdate()
+    public async void OnUpdate()
     {
+        if (GameEndChecker() != Owner.None) 
+        {
+            Debug.Log(GameEndChecker());
+            //EndBattle?.Invoke(this, new EndBattleEventArgs(GameEndChecker()));
+        }
         switch (state)
         {
             case TurnState.ActionSelecting:
                 if (Input.GetAction(Trigger.ViewMode).down)
                 {
-                    ChangeState(TurnState.Viewing);
+                    await ChangeState(TurnState.Viewing);
                 }
                 if (crrentUnit != null)
                 {
-                    if (Input.GetAction(Trigger.Move_Left).down) crrentUnit.Move(-1, 0, 0);
-                    if (Input.GetAction(Trigger.Move_Right).down) crrentUnit.Move(1, 0, 0);
-                    if (Input.GetAction(Trigger.Move_Up).down) crrentUnit.Move(0, 0, 1);
-                    if (Input.GetAction(Trigger.Move_Down).down) crrentUnit.Move(0, 0, -1);
+                    if (Stage.piece == null || Stage.piece?.state != BlockState.Hold)
+                    {
+                        if (Input.GetAction(Trigger.Move_Left).down) crrentUnit.Move(-1, 0, 0);
+                        if (Input.GetAction(Trigger.Move_Right).down) crrentUnit.Move(1, 0, 0);
+                        if (Input.GetAction(Trigger.Move_Up).down) crrentUnit.Move(0, 0, 1);
+                        if (Input.GetAction(Trigger.Move_Down).down) crrentUnit.Move(0, 0, -1);
+                    }
                 }
                 break;
             case TurnState.Viewing:
                 if (Input.GetAction(Trigger.ViewMode).down || Input.GetAction(Trigger.Escape).down)
                 {
-                    ChangeState(TurnState.ActionSelecting);
+                    await ChangeState(TurnState.ActionSelecting);
                 }
                 view.OnUpdate();
                 break;
         }
     }
-    void ChangeState(TurnState state)
+    Owner GameEndChecker()
+    {
+        int p = 0, e = 0;
+        foreach (Unit u in units)
+        {
+            if (u?.owner == Owner.Player) p += 1;
+            else if (u?.owner == Owner.Enemy) e += 1;
+        }
+        if (p == 0) return Owner.Enemy;
+        if (e == 0) return Owner.Player;
+        return Owner.None;
+    }
+    async Task  ChangeState(TurnState state)
     {
         this.state = state;
         if (state == TurnState.ActionSelecting)
         {
             view.EndView();
+            await Stage.moveArea.AreaCal(crrentUnit.pos, crrentUnit.move_range);
             Cam.Init(crrentUnit.pos.x, Cam.pos.y, crrentUnit.pos.z-5, 45, 0, 0);
             turnUI = new UI01().Init(0, crrentUnit, 350, 250);
-            Stage.moveArea.AreaCal(crrentUnit.pos, crrentUnit.move_range);
         }
         else if (state == TurnState.Viewing)
         {
-            for (int i = 0; i < crrentUnit.skills.Count; i++) crrentUnit.skills[i].Cancel();
+            for (int i = 0; i < crrentUnit.skills.Count; i++) await crrentUnit.skills[i].Cancel();
             turnUI.Destroy();
-            Stage.moveArea.Destroy();
+            Stage.piece?.Destroy();
+            await Stage.moveArea.Destroy();
             view.Init();
         }
     }
@@ -135,4 +160,12 @@ public class TurnCount
 public static class TurnEndFlag
 {
     public static System.Action EndTurn { get; set; }
+}
+public class EndBattleEventArgs : System.EventArgs 
+{
+    public Owner owner { get; private set; }
+    public EndBattleEventArgs(Owner owner) : base()
+    { 
+        this.owner = owner;
+    }
 }
