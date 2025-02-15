@@ -47,7 +47,7 @@ public class UIBase
         }
         else if (type == UIType.Text)
         {
-            id = TextList.Add(this);
+            id = TextList.Add(this as Text);
         }
         else if (type == UIType.Button)
         {
@@ -80,6 +80,7 @@ public class UIBase
     public string text { get;protected set; }
     public int id { get;protected set; }
     public int sort { get;protected set; }
+    public Color color = new Color(1, 1, 1, 1);
     public UIState state { get;protected set; }
     public UIType type { get;protected set; }
     public Vector2 pos { get;protected set; }
@@ -190,26 +191,26 @@ public static class ImageList
 
 public static class TextList
 {
-    private static List<UIBase> list = new List<UIBase>();
+    private static List<Text> list = new List<Text>();
 
-    public static int Add(UIBase obj)
+    public static int Add(Text obj)
     {
         list.Add(obj);
         return list.Count - 1;
     }
 
-    public static void Remove(UIBase obj)
+    public static void Remove(Text obj)
     {
         list.RemoveAt(obj.id);
     }
-    public static void Set(int id, UIBase obj)
+    public static void Set(int id, Text obj)
     {
         if (id >= list.Count) return;
         list[id] = obj;
         if (obj == null) ListClose(id);
     }
 
-    public static List<UIBase> GetList()
+    public static List<Text> GetList()
     {
         return list;
     }

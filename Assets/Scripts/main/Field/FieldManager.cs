@@ -68,6 +68,13 @@ public class FieldManager
         if (pos.z < 0 || pos.z >= Constant.FieldDepth) return false;
         return field[(int)pos.x, (int)pos.y, (int)pos.z].unit != null;
     }
+    public Unit GetUnit(Vector3 pos)
+    {
+        if (pos.y <= 0 || pos.y > Constant.FieldHeight) return null;
+        if (pos.x < 0 || pos.x >= Constant.FieldWidth) return null;
+        if (pos.z < 0 || pos.z >= Constant.FieldDepth) return null;
+        return field[(int)pos.x, (int)pos.y, (int)pos.z].unit;
+    }
     public bool CanGround(Vector3 pos)
     {
         if (pos.y <= 0 || pos.y > Constant.FieldHeight) return false;

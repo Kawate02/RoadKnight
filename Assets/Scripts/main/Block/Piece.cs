@@ -1,6 +1,5 @@
 using System;
 using System.Threading.Tasks;
-using UnityEditor.Timeline.Actions;
 
 public class Piece : Object
 {
@@ -27,7 +26,88 @@ public class Piece : Object
                 blockPos[3] = new Vector3(2, 1, 0);
                 break;
             case PieceType.B:
-                
+                blocks = new Block[5];
+                blockPos = new Vector3[5];
+                blocks[0] = new BlockB().Init(0, 0, 0);
+                blocks[1] = new BlockA().Init(0, 0, 0);
+                blocks[2] = new BlockA().Init(0, 0, 0);
+                blocks[3] = new BlockA().Init(0, 0, 0);
+                blocks[4] = new BlockA().Init(0, 0, 0);
+                blockPos[0] = new Vector3(0, 0, 0);
+                blockPos[1] = new Vector3(0, 0, 1);
+                blockPos[2] = new Vector3(0, 0, 2);
+                blockPos[3] = new Vector3(1, 0, 1);
+                blockPos[4] = new Vector3(-1, 0, 1);
+                break;
+            case PieceType.C:
+                blocks = new Block[6];
+                blockPos = new Vector3[6];
+                blocks[0] = new BlockB().Init(0, 0, 0);
+                blocks[1] = new BlockA().Init(0, 0, 0);
+                blocks[2] = new BlockA().Init(0, 0, 0);
+                blocks[3] = new BlockA().Init(0, 0, 0);
+                blocks[4] = new BlockA().Init(0, 0, 0);
+                blocks[5] = new BlockA().Init(0, 0, 0);
+                blockPos[0] = new Vector3(0, 0, 0);
+                blockPos[1] = new Vector3(0, 0, 1);
+                blockPos[2] = new Vector3(0, 1, 1);
+                blockPos[3] = new Vector3(1, 0, 1);
+                blockPos[4] = new Vector3(1, 0, 0);
+                blockPos[5] = new Vector3(1, 1, 0);
+                break;
+            case PieceType.D:
+                blocks = new Block[13];
+                blockPos = new Vector3[13];
+                blocks[0] = new BlockB().Init(0, 0, 0);
+                blocks[1] = new BlockA().Init(0, 0, 0);
+                blocks[2] = new BlockA().Init(0, 0, 0);
+                blocks[3] = new BlockA().Init(0, 0, 0);
+                blocks[4] = new BlockA().Init(0, 0, 0);
+                blocks[5] = new BlockA().Init(0, 0, 0);
+                blocks[6] = new BlockA().Init(0, 0, 0);
+                blocks[7] = new BlockA().Init(0, 0, 0);
+                blocks[8] = new BlockA().Init(0, 0, 0);
+                blocks[9] = new BlockA().Init(0, 0, 0);
+                blocks[10] = new BlockA().Init(0, 0, 0);
+                blocks[11] = new BlockA().Init(0, 0, 0);                
+                blocks[12] = new BlockA().Init(0, 0, 0);
+                blockPos[0] = new Vector3(0, 0, 0);
+                blockPos[1] = new Vector3(-1, 0, 1);
+                blockPos[2] = new Vector3(0, 0, 1);
+                blockPos[3] = new Vector3(1, 0, 1);
+                blockPos[4] = new Vector3(-1, 0, 2);
+                blockPos[5] = new Vector3(0, 0, 2);
+                blockPos[6] = new Vector3(1, 0, 2);
+                blockPos[7] = new Vector3(-1, 1, 2);
+                blockPos[8] = new Vector3(0, 1, 2);
+                blockPos[9] = new Vector3(1, 1, 2);
+                blockPos[10] = new Vector3(-1, 2, 2);
+                blockPos[11] = new Vector3(0, 2, 2);
+                blockPos[12] = new Vector3(1, 2, 2);
+                break;
+            case PieceType.E:
+                blocks = new Block[10];
+                blockPos = new Vector3[10];
+                blocks[0] = new BlockB().Init(0, 0, 0);
+                blocks[1] = new BlockA().Init(0, 0, 0);
+                blocks[2] = new BlockA().Init(0, 0, 0);
+                blocks[3] = new BlockA().Init(0, 0, 0);
+                blocks[4] = new BlockA().Init(0, 0, 0);
+                blocks[5] = new BlockA().Init(0, 0, 0);
+                blocks[6] = new BlockA().Init(0, 0, 0);
+                blocks[7] = new BlockA().Init(0, 0, 0);
+                blocks[8] = new BlockA().Init(0, 0, 0);
+                blocks[9] = new BlockA().Init(0, 0, 0);
+                blockPos[0] = new Vector3(0, 0, 0);
+                blockPos[1] = new Vector3(0, 0, 1);
+                blockPos[2] = new Vector3(0, 0, 2);
+                blockPos[3] = new Vector3(0, 0, 3);
+                blockPos[4] = new Vector3(-1, 0, 1);
+                blockPos[5] = new Vector3(-1, 0, 2);
+                blockPos[6] = new Vector3(-1, 0, 3);                
+                blockPos[7] = new Vector3(1, 0, 1);
+                blockPos[8] = new Vector3(1, 0, 2);
+                blockPos[9] = new Vector3(1, 0, 3);
                 break;
         }
 
@@ -76,9 +156,6 @@ public class Piece : Object
                 bool canPlace = true;
                 for (int i = 1; i < blocks.Length; i++)
                 {
-                    Debug.Log(Stage.field.CanPlace((block.pos + blockPos[i])/Constant.BlockSize));
-                    Debug.Log (Stage.field.CanPlace(new Vector3(1, 0, 2)));
-                    Debug.Log(((block.pos + blockPos[i])/Constant.BlockSize).ToString());
                     if (!Stage.field.CanPlace((block.pos + blockPos[i])/Constant.BlockSize) || Stage.field.ThereIsUnit((block.pos + blockPos[i])/Constant.BlockSize))
                     {
                         canPlace = false;
@@ -168,9 +245,11 @@ public class Piece : Object
     }
     public override void Destroy()
     {
+        state = BlockState.Other;
         for (int i = 0; i < blocks.Length; i++)
         {
             blocks[i].Destroy();
         }
+        base.Destroy();
     }
 }

@@ -15,28 +15,26 @@ public class UI02 : Popup
         buttons.Add(new Button().Init(sort + 1, x + 10, y + 200, 480, 80, Path.UI_Button, null, Path.UI_ButtonOver));
         buttons.Add(new Button().Init(sort + 1, x + 300, y + 300, 200, 80, Path.UI_Button, null, Path.UI_ButtonOver));
 
-        unit.skills[2].CancelEvent += () => {Enable();display.Move(300, 20);};
-        unit.skills[1].CancelEvent += () => {Enable();display.Move(300, 20);};
-        unit.skills[0].CancelEvent += () => {Enable();display.Move(300, 20);};
         display = new UI03().Init(_sort, 330, 30, parent);
 
         buttons[0].ClickEvent += async () => {
+            unit.skills[2].CancelEvent += () => {Enable();display.Enable();};
             await Task.Delay(1);
-            display.Move(-300, -20);
+            display.Disable();
             unit.skills[2].Wait(unit);
             Disable();
         };
         buttons[1].ClickEvent += async () => {
-            unit.skills[1].CancelEvent += () => {Enable();};
+            unit.skills[1].CancelEvent += () => {Enable();display.Enable();};
             await Task.Delay(1);
-            display.Move(-300, -20);
+            display.Disable();
             unit.skills[1].Wait(unit);
             Disable();
         };
         buttons[2].ClickEvent += async () => {
-            unit.skills[0].CancelEvent += () => {Enable();};
+            unit.skills[0].CancelEvent += () => {Enable();display.Enable();};
             await Task.Delay(1);
-            display.Move(-300, -20);
+            display.Disable();
             unit.skills[0].Wait(unit);
             Disable();
         };

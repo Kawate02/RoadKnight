@@ -185,6 +185,7 @@ public class Object
         scale.y = y;
         scale.z = z;
     }
+
     public void IdAdjust(int id)
     {
         this.id = id;

@@ -13,6 +13,7 @@ public enum Trigger
     Rotate_Z,
     ViewMode,
     Escape,
+    Space,
     Count
 }
 

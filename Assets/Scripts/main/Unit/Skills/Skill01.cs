@@ -1,30 +1,27 @@
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 public class Skill01 : SkillBase
 {
     public override SkillBase Init()
     {
-        _range = new List<Vector3>() {new Vector3(1, 1, 0), new Vector3(1, 0, 0), new Vector3(1, -1, 0)};
+        _range = SkillDataBase.Skill01.Range;
         return this;
     }
-    protected override void AreaCal() 
+    protected override async Task AreaCal(Vector3 pos = null) 
     {
-        base.AreaCal();
+        await base.AreaCal();
         for (int i = 0; i < base.range.Count; i++)
         {
-            if (Stage.field.CanPlace(range[i]) && Stage.field.CanGround(range[i]))
-            {
-                Stage.skillArea.AddPos(range[i]);
-            }
+            AddPos(range[i]);
         }
         Stage.skillArea.Enable(Path.UI_Attack_Area);
     }
-    public override void Exe()
+    public async override void Exe(Vector3 pos)
     {
-        Stage.skillArea.Destroy();
-        Stage.moveArea.Destroy();
-        var units = GetUnits(range);
-        for (int i = 0; i < units.Count; i++) if (units[i].IsEnemy(owner)) units[i].Damage(Formula.Damage(owner.atk, units[i].def));
+        await Stage.skillArea.Destroy();
+        var unit = GetUnits(pos);
+        if (unit != null && unit.IsEnemy(owner)) unit.Damage(Formula.Damage(owner.atk, unit.def, SkillDataBase.Skill01.attack_magnification));
         TurnEndFlag.EndTurn.Invoke();
     }
 }

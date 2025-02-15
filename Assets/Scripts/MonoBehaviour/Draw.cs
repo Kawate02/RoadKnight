@@ -16,7 +16,7 @@ public class Draw : MonoBehaviour
     List<Object> sprites = new List<Object>(); //SpriteObjectのリストコピー
     List<Object> models = new List<Object>();
     List<UIBase> images = new List<UIBase>();
-    List<UIBase> texts = new List<UIBase>();
+    List<Text> texts = new List<Text>();
     Canvas canvas;
 
     List<MeshFilter> meshes = new List<MeshFilter>();
@@ -188,7 +188,13 @@ public class Draw : MonoBehaviour
                 texts2D[i] = textList[i].GetComponent<TMPro.TextMeshProUGUI>();
             }
             if (texts[i].state == UIState.Inactive) texts2D[i].text = "";
-            else if (texts[i].state == UIState.Active) texts2D[i].text = texts[i].text;
+            else if (texts[i].state == UIState.Active) 
+            {
+                UnityEngine.Color color = new UnityEngine.Color(texts[i].color.R, texts[i].color.G, texts[i].color.B, texts[i].color.A);
+                texts2D[i].fontSize = texts[i].fontSize;
+                texts2D[i].text = texts[i].text;
+                texts2D[i].color = color;
+            }
             textTransform[i].position = ConvertToVector(texts[i].pos);
             textTransform[i].sizeDelta = ConvertToVector(texts[i].size);
         }

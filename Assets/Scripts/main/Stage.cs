@@ -7,10 +7,12 @@ public class Stage
     public static SkillArea skillArea { get; private set; } = new SkillArea();
     public static Piece piece;
     List<Block> blocks = new List<Block>();
+    BackGround backGround = new BackGround();
     
     public void Init()
     {
         Cam.Init(4, 10, -4, 45, 0, 0);
+        backGround = backGround.Init();
         field.Init();
         for (int i = 0; i < Constant.FieldWidth; i++)
         {
