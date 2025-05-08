@@ -33,6 +33,7 @@ public class Draw : MonoBehaviour
 
     public void Init()
     {
+        Cam.Init(0, 0, 0, 0, 0, 0);
         cam = UnityEngine.Camera.main;
         canvas = GameObject.Find("Canvas").GetComponent<Canvas>();
     }

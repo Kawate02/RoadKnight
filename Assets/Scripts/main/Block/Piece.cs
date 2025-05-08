@@ -126,6 +126,7 @@ public class Piece : Object
     public async void Holding()
     {
         state = BlockState.Hold;
+        Debug.Log("Holding");
         while (state == BlockState.Hold)
         {
             if (Input.GetAction(Trigger.Escape).down) 
@@ -149,7 +150,7 @@ public class Piece : Object
                     Rotate(0, 0, Input.Scroll);
                 }
             }
-            if (Input.ChoiceBlock != -1)
+            if (Input.ChoiceBlock != -1) //有効なマスが選択された
             {
                 var block = ModelList.GetList()[Input.ChoiceBlock];
                 
@@ -158,6 +159,7 @@ public class Piece : Object
                 {
                     if (!Stage.field.CanPlace((block.pos + blockPos[i])/Constant.BlockSize) || Stage.field.ThereIsUnit((block.pos + blockPos[i])/Constant.BlockSize))
                     {
+                        //ピースの一部がフィールド外 or ほかのピースに埋まっている
                         canPlace = false;
                         break;
                     }

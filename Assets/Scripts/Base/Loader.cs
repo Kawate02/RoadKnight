@@ -2,6 +2,8 @@ using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
+
+//ResourcesフォルダからSpriteをロード
 public static class SpriteLoader
 {
     static List<UnityEngine.Sprite> list = new List<UnityEngine.Sprite>();
@@ -10,7 +12,11 @@ public static class SpriteLoader
     public static UnityEngine.Sprite Load(string path)
     {
         if (path == null) return null;
-        if (pathList.ContainsKey(path)) return list[pathList[path]];
+        if (pathList.ContainsKey(path)) 
+        {
+            //ロード済みの素材だった
+            return list[pathList[path]];
+        }
         pathList.Add(path, list.Count);
         list.Add(Resources.Load<UnityEngine.Sprite>(path));
         return list[list.Count - 1];

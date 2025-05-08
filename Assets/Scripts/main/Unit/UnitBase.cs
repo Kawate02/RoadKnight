@@ -36,14 +36,15 @@ public class Unit : Object
     private int[] skill_id;
     public EventHandler<DamageEventArgs> DamageEvent;
     public System.Action DeadEvent;
-    public virtual Unit Init(Owner owner, int id, float x = 0, float y = 0, float z = 0)
+    public virtual Unit Init(Owner owner, int unitid, float x = 0, float y = 0, float z = 0)
     {
-        image = GetImage(id);
+        Debug.Log("UnitInit:" + unitid);
+        image = GetImage(unitid);
         base.Init(ObjectType.Sprite, Constant.BlockSize * x, Constant.BlockSize * y, Constant.BlockSize * z);
         this.owner = owner;
         if (owner == Owner.Player) SetDirection(Direction.Right);
         if (owner == Owner.Enemy) SetDirection(Direction.Left);
-        GetParameter(id);
+        GetParameter(unitid);
         ParameterCal();
         Rotate(Cam.rot.x, Cam.rot.y, Cam.rot.z);
         Stage.field.SetUnit(this, pos);
@@ -51,6 +52,7 @@ public class Unit : Object
     }
     public override void OnUpdate()
     {
+        Debug.Log(SpriteList.GetList()[id].name);
         for (int i = 0; i < effects.Count; i++)
         {
             effects[i].OnUpdate(this);

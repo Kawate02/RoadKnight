@@ -25,15 +25,19 @@ public class Vector3
         this.y = v.y;
         this.z = v.z;
     }
+
+    //構造体的役割なのでpublic
     public float x;
     public float y;
     public float z;
 
+    //四則演算が出来るようにオーバーロード
     public static Vector3 operator +(Vector3 a, Vector3 b) => new Vector3(a.x + b.x, a.y + b.y, a.z + b.z);
     public static Vector3 operator -(Vector3 a, Vector3 b) => new Vector3(a.x - b.x, a.y - b.y, a.z - b.z);
     public static Vector3 operator *(Vector3 a, float b) => new Vector3(a.x * b, a.y * b, a.z * b);
     public static Vector3 operator /(Vector3 a, float b) => new Vector3(a.x / b, a.y / b, a.z / b);
 
+    //参照型同士で比較可能にする
     public static bool operator ==(Vector3 a, Vector3 b)
     {
         if (a.x == b.x && a.y == b.y && a.z == b.z) return true;

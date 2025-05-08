@@ -44,6 +44,7 @@ public class Battle
     {
         if (Input.GetAction(Trigger.Space).down)
         {
+            TurnEndFlag.EndTurn -= turn.EndTurn;
             SceneManager.ChangeScene(Scene.Title);
         }
         stage.OnUpdate();
