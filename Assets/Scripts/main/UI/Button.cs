@@ -39,6 +39,7 @@ public class Button : UIBase
     protected virtual void OnClick()
     { 
         ClickEvent?.Invoke();
+        Debug.Log("OnClick");
     }
     public override void OnUpdate()
     {

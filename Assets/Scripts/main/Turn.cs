@@ -44,6 +44,7 @@ public class Turn
     }
     public async void OnUpdate()
     {
+        Debug.Log(Stage.piece?.state);
         if (GameEndChecker() != Owner.None) 
         {
             Debug.Log(GameEndChecker());

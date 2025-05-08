@@ -5,6 +5,7 @@ public class Title
     {
         Cam.Init(4, 10, -4, 45, 0, 0);
         ui = new TitleUI().Init();
+        Debug.Log("TitleInit");
     }
     public void OnUpdate() 
     {

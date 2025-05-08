@@ -1,3 +1,5 @@
+using System.Threading.Tasks;
+
 public enum Scene
 {
     Title,
@@ -6,7 +8,7 @@ public enum Scene
 
 public class SceneManager
 {
-    static Scene scene = Scene.Title;
+    static Scene scene;
     static Battle battle = new Battle();
     static Title title = new Title();
 
@@ -20,18 +22,20 @@ public class SceneManager
             case Scene.Battle:
                 battle.OnUpdate();
                 break;
+            default:
+                break;
         }
     }
 
     public void Init() 
     {
-        scene = Scene.Title;
+        ChangeScene(Scene.Title);
     }
     public Scene GetScene() => scene;
 
-    public static void ChangeScene(Scene nextScene)
+    public async static void ChangeScene(Scene nextScene)
     {
-        scene = nextScene;
+        await Task.Delay(1);
         SpriteList.GetList().Clear();
         ModelList.GetList().Clear();
         EmptyList.GetList().Clear();
@@ -48,5 +52,6 @@ public class SceneManager
                 battle.Init();
                 break;
         }
+        scene = nextScene;
     }
 }
