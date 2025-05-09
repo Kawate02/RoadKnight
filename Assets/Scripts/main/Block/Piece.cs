@@ -11,7 +11,7 @@ public class Piece : Object
     public Piece Init(PieceType type, float x = 0, float y = 0, float z = 0)
     {
         base.Init(ObjectType.Empty, x*Constant.BlockSize, y*Constant.BlockSize, z*Constant.BlockSize);
-        switch (type)
+        switch (type) //typeに対応した組み合わせでブロックを生成
         {
             case PieceType.A:
                 blocks = new Block[4];
@@ -119,24 +119,22 @@ public class Piece : Object
             blocks[i].SetPos(pos.x + blockPos[i].x, pos.y + blockPos[i].y, pos.z + blockPos[i].z);
         }
         blocks[0].SetScale(0.9f, 0.9f, 0.9f);
-
-
         return this;
     }
     public async void Holding()
     {
         state = BlockState.Hold;
-        Debug.Log("Holding");
-        while (state == BlockState.Hold)
+        while (state == BlockState.Hold) //ピース保持中の挙動
         {
             if (Input.GetAction(Trigger.Escape).down) 
             {
                 Cancel();
                 break;
             }
-            SetPos(Input.WorldMousePosition.x, Input.WorldMousePosition.y, Input.WorldMousePosition.z);
+            SetPos(Input.WorldMousePosition.x, Input.WorldMousePosition.y, Input.WorldMousePosition.z); //マウス位置に追従
             if (Input.Scroll != 0)
             {
+                //追加キー入力で回転軸を変更する
                 if  (Input.GetAction(Trigger.Rotate_X).value)
                 {
                     Rotate(Input.Scroll, 0, 0);
@@ -166,7 +164,8 @@ public class Piece : Object
                 }
                 if (canPlace)
                 {
-                    SetPos(block.pos.x, block.pos.y, block.pos.z);
+                    //選択座標が配置可能である
+                    SetPos(block.pos.x, block.pos.y, block.pos.z); //
                     if (Input.GetAction(Trigger.Mouse_Left).down)
                     {
                         ChangeState(BlockState.Set);
