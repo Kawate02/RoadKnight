@@ -173,7 +173,7 @@ public class Piece : Object
                         {
                             blocks[i].SetBlock();
                         }
-                        TurnEndFlag.EndTurn.Invoke();
+                        TurnEndFlag.EndTurn.Invoke(); //配置後ターン終了
                     }
                 }
             }
