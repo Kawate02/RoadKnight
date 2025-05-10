@@ -3,10 +3,12 @@ using System.Threading.Tasks;
 
 public class Piece : Object
 {
+    //メンバ変数////////////
     Vector3[] blockPos;
     Block[] blocks;
     public BlockState state { get; protected set; }
     public event System.Action CancelEvent;
+    /////////////////////////////////////////////////
 
     public Piece Init(PieceType type, float x = 0, float y = 0, float z = 0)
     {
@@ -111,14 +113,14 @@ public class Piece : Object
                 break;
         }
 
-        for (int i = 0; i < blocks.Length; i++)
+        for (int i = 0; i < blocks.Length; i++) //ブロックのサイズをフィールドのスケールに調整
         {
             blockPos[i].x *= Constant.BlockSize;
             blockPos[i].y *= Constant.BlockSize;
             blockPos[i].z *= Constant.BlockSize;
             blocks[i].SetPos(pos.x + blockPos[i].x, pos.y + blockPos[i].y, pos.z + blockPos[i].z);
         }
-        blocks[0].SetScale(0.9f, 0.9f, 0.9f);
+        blocks[0].SetScale(0.9f, 0.9f, 0.9f); //根本のブロックは一回り小さくする
         return this;
     }
     public async void Holding()
@@ -148,7 +150,7 @@ public class Piece : Object
                     Rotate(0, 0, Input.Scroll);
                 }
             }
-            if (Input.ChoiceBlock != -1) //有効なマスが選択された
+            if (Input.ChoiceBlock != -1) //有効な座標が選択された
             {
                 var block = ModelList.GetList()[Input.ChoiceBlock];
                 
