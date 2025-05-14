@@ -38,7 +38,6 @@ public class Unit : Object
     public System.Action DeadEvent;
     public virtual Unit Init(Owner owner, int unitid, float x = 0, float y = 0, float z = 0)
     {
-        Debug.Log("UnitInit:" + unitid);
         image = GetImage(unitid);
         base.Init(ObjectType.Sprite, Constant.BlockSize * x, Constant.BlockSize * y, Constant.BlockSize * z);
         this.owner = owner;
@@ -68,6 +67,7 @@ public class Unit : Object
     {
         switch (id)
         {
+            //UnitParameterクラスから各種パラメータを取得
             case 0:
             name = UnitParameter.Unit01.name;
             _max_hp = UnitParameter.Unit01.max_hp;
@@ -118,7 +118,7 @@ public class Unit : Object
             return "";
         }
     }
-    public void ParameterCal()
+    public void ParameterCal() //バフ適用時などに最終パラメータを計算し直す
     {
         var damage = max_hp - hp;
         max_hp = _max_hp;
@@ -175,7 +175,6 @@ public class Unit : Object
     }
     public virtual void Damage(int dmg)
     {
-        Debug.Log(dmg);
         if (hp <= 0) return;
         DamageAction(ref dmg);
         hp -= dmg;
@@ -225,7 +224,7 @@ public class Unit : Object
         {
             effects[i].DamageAction(this, ref dmg);
         }
-        DamageEvent?.Invoke(this, new DamageEventArgs(dmg));
+        DamageEvent?.Invoke(this, new DamageEventArgs(dmg)); //HPバー減少などのイベントが紐づけられている
     }
     protected virtual void DeadAction() 
     {
