@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 
 public class Piece : Object
 {
-    //メンバ変数////////////
+    //メンバ変数
     Vector3[] blockPos;
     Block[] blocks;
     public BlockState state { get; protected set; }
@@ -167,7 +167,7 @@ public class Piece : Object
                 if (canPlace)
                 {
                     //選択座標が配置可能である
-                    SetPos(block.pos.x, block.pos.y, block.pos.z); //
+                    SetPos(block.pos.x, block.pos.y, block.pos.z); //選択座標にスナップ
                     if (Input.GetAction(Trigger.Mouse_Left).down)
                     {
                         ChangeState(BlockState.Set);
