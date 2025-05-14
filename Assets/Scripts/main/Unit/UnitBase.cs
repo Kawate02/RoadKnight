@@ -137,12 +137,15 @@ public class Unit : Object
             move_range = move_range + effects[i].move_range_buff < 0 ? 0 : move_range + effects[i].move_range_buff;
         }
     }
-
+    //通常攻撃コマンドが無いため不使用///////////////////////
     public virtual void Attack(Unit target)
     {
         target.Damage(atk);
         AttackAction(target);
     }
+    ///////////////////////////////////////////////////////
+
+    //offsetフレームかけて現在地から目標座標まで移動する
     public override void Move(float x, float y, float z, float offset = 0)
     {
         Stage.field.SetUnit(null, pos);
@@ -173,7 +176,7 @@ public class Unit : Object
         }
         return false;
     }
-    public virtual void Damage(int dmg)
+    public virtual void Damage(int dmg) //ダメージ計算後の値が渡される
     {
         if (hp <= 0) return;
         DamageAction(ref dmg);
@@ -189,6 +192,8 @@ public class Unit : Object
         DeadAction();
         Destroy();
     }
+
+    //各アクションに連動する効果があれば実行する//////////////////////////////////////////////////////////
     public virtual void StartTurnAction() 
     {
         for (int i = 0; i < effects.Count; i++)
@@ -228,13 +233,15 @@ public class Unit : Object
     }
     protected virtual void DeadAction() 
     {
-        DeadEvent?.Invoke();
-        Stage.field.SetUnit(null, pos);
+        DeadEvent?.Invoke(); //Turnクラスの行動順管理配列から自身を削除
+        Stage.field.SetUnit(null, pos); //ユニットを非表示にする
         for (int i = 0; i < effects.Count; i++)
         {
             effects[i].DeadAction(this);
         }
     }
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    
     public bool IsEnemy(Unit target) { return target.owner != owner; }
     public void AddEffect(Effect effect) 
     { 
